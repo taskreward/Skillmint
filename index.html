@@ -1,100 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Skillmint - Signup</title>
+  <title>Skillmint Signup</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 0; }
-    .container { max-width: 600px; margin: 30px auto; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    h2 { text-align: center; margin-bottom: 20px; }
-    input, select, button { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
-    button { background: #4CAF50; color: white; font-weight: bold; cursor: pointer; border: none; }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    form { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; }
+    button { padding: 10px; width: 100%; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
     button:hover { background: #45a049; }
-    .bundle { padding: 12px; border: 1px solid #ccc; border-radius: 6px; margin: 8px 0; cursor: pointer; }
-    .bundle.selected { background: #4CAF50; color: white; border-color: #4CAF50; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h2>Sign Up to Skillmint</h2>
+<h2>Signup & Choose Your Bundle</h2>
+<form id="signupForm">
+  <input type="text" id="username" placeholder="Username" required>
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="password" id="password" placeholder="Password" required>
+  <input type="tel" id="phone" placeholder="Phone Number" required>
+  <input type="text" id="state" placeholder="State" required>
+  <input type="number" id="age" placeholder="Age" required>
+  <input type="text" id="referral" placeholder="Referral Code (Optional)">
 
-    <!-- Signup Form -->
-    <input type="text" id="username" placeholder="Username" required>
-    <input type="email" id="email" placeholder="Email" required>
-    <input type="password" id="password" placeholder="Password" required>
-    <input type="tel" id="phone" placeholder="Phone Number" required>
-    <input type="text" id="state" placeholder="State" required>
-    <input type="number" id="age" placeholder="Age" required>
-    <input type="text" id="referral" placeholder="Referral Code (Optional)">
+  <label>Select Bundle:</label>
+  <select id="bundle" required>
+    <option value="">-- Choose Bundle --</option>
+    <option value="1">Bundle 1 - ₹99</option>
+    <option value="2">Bundle 2 - ₹130</option>
+    <option value="3">Bundle 3 - ₹160</option>
+    <option value="4">Bundle 4 - ₹200</option>
+    <option value="5">Bundle 5 - ₹250</option>
+    <option value="6">Bundle 6 - ₹599</option>
+    <option value="7">Bundle 7 - ₹650</option>
+    <option value="8">Bundle 8 - ₹699</option>
+    <option value="9">Bundle 9 - ₹1000</option>
+    <option value="10">Bundle 10 - ₹1999</option>
+  </select>
 
-    <h3>Select Your Bundle</h3>
-    <div id="bundles"></div>
+  <button type="submit">Signup & Pay</button>
+</form>
 
-    <button onclick="signup()">Sign Up & Pay</button>
-  </div>
+<script>
+  const bundlePrices = {
+    1: 99, 2: 130, 3: 160, 4: 200, 5: 250,
+    6: 599, 7: 650, 8: 699, 9: 1000, 10: 1999
+  };
 
-  <script>
-    // Bundle data
-    const bundles = [
-      {id:1, price:99}, {id:2, price:130}, {id:3, price:160}, {id:4, price:200}, {id:5, price:250},
-      {id:6, price:599}, {id:7, price:650}, {id:8, price:699}, {id:9, price:1000}, {id:10, price:1999}
-    ];
+  document.getElementById("signupForm").addEventListener("submit", function(e){
+    e.preventDefault();
 
-    const bundleContainer = document.getElementById("bundles");
-    let selectedBundle = null;
+    let userData = {
+      username: document.getElementById("username").value,
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value,
+      phone: document.getElementById("phone").value,
+      state: document.getElementById("state").value,
+      age: document.getElementById("age").value,
+      referral: document.getElementById("referral").value,
+      bundle: document.getElementById("bundle").value
+    };
 
-    // Render bundles
-    bundles.forEach(b => {
-      const div = document.createElement("div");
-      div.classList.add("bundle");
-      div.textContent = `Bundle ${b.id} - ₹${b.price}`;
-      div.onclick = () => {
-        document.querySelectorAll(".bundle").forEach(el => el.classList.remove("selected"));
-        div.classList.add("selected");
-        selectedBundle = b;
-      };
-      bundleContainer.appendChild(div);
-    });
+    localStorage.setItem("userData", JSON.stringify(userData));
 
-    function signup() {
-      const username = document.getElementById("username").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const state = document.getElementById("state").value.trim();
-      const age = document.getElementById("age").value.trim();
-      const referral = document.getElementById("referral").value.trim();
+    let bundleId = userData.bundle;
+    let amount = bundlePrices[bundleId];
 
-      if (!username || !email || !password || !phone || !state || !age) {
-        alert("Please fill in all required fields.");
-        return;
-      }
-      if (!selectedBundle) {
-        alert("Please select a bundle.");
-        return;
-      }
+    // Redirect to UPI
+    let upiLink = `upi://pay?pa=sahilzeerak123@okhdfcbank&pn=Skillmint&am=${amount}&cu=INR`;
+    window.location.href = upiLink;
 
-      // Save user to localStorage with pending payment
-      const userData = {
-        username, email, password, phone, state, age, referral,
-        bundleId: selectedBundle.id,
-        bundlePrice: selectedBundle.price,
-        paymentStatus: "pending"
-      };
-      localStorage.setItem("userData", JSON.stringify(userData));
-
-      // Redirect to UPI payment
-      const upiLink = `upi://pay?pa=sahilzeerak123@okhdfcbank&pn=Skillmint&mc=0000&tid=${Date.now()}&tr=${Date.now()}&tn=Bundle${selectedBundle.id}&am=${selectedBundle.price}&cu=INR`;
-      window.location.href = upiLink;
-
-      // After payment, user should manually come back to payment-success.html
-      setTimeout(() => {
-        window.location.href = "payment-success.html";
-      }, 2000);
-    }
-  </script>
+    // After UPI, show success page
+    setTimeout(() => {
+      alert("After completing payment in your UPI app, click OK to continue.");
+      window.location.href = "payment-success.html";
+    }, 5000);
+  });
+</script>
 
 </body>
 </html>
