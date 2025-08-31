@@ -93,7 +93,7 @@
     <div class="card">
       <h2>Your Purchased Bundle</h2>
       <p id="bundleInfo"></p>
-      <div id="pdfViewer" style="display:none; margin-top:15px;">
+      <div id="pdfViewer" style="margin-top:15px;">
         <iframe id="pdfFrame" width="100%" height="500px" style="border: none;"></iframe>
         <br>
         <button class="fullscreen-btn" onclick="openFullscreen()">📖 Full Screen Read</button>
@@ -112,10 +112,10 @@
     const referral = localStorage.getItem("referralCode") || "N/A";
     document.getElementById("referralCode").textContent = referral;
 
-    // Example referral data (later we can save in localStorage)
+    // Referral data (all zero initially)
     const referralData = {
       labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Today"],
-      data: [2, 3, 1, 5, 4, 6, 3] // dummy numbers
+      data: [0, 0, 0, 0, 0, 0, 0]
     };
 
     // Draw chart
@@ -146,7 +146,6 @@
     // Load purchased bundle info
     const purchasedBundle = localStorage.getItem("paymentBundle");
     const price = localStorage.getItem("paymentPrice");
-    const status = localStorage.getItem("paymentVerified");
 
     const bundlePDFs = {
       "1": "bundles/bundle1.pdf",
@@ -161,17 +160,14 @@
       "10": "bundles/bundle10.pdf"
     };
 
-    if(status === "pending") {
+    if(purchasedBundle && price) {
       document.getElementById("bundleInfo").textContent = 
-        `You purchased Bundle ${purchasedBundle} (₹${price}). Your payment is under verification.`;
-    } else if(status === "verified") {
-      document.getElementById("bundleInfo").textContent = 
-        `You purchased Bundle ${purchasedBundle} (₹${price}). Payment verified ✅`;
+        `You purchased Bundle ${purchasedBundle} (₹${price}).`;
 
-      document.getElementById("pdfViewer").style.display = "block";
       document.getElementById("pdfFrame").src = bundlePDFs[purchasedBundle] + "#toolbar=0&navpanes=0&scrollbar=0";
     } else {
       document.getElementById("bundleInfo").textContent = "No bundle purchased yet.";
+      document.getElementById("pdfViewer").style.display = "none";
     }
 
     // Fullscreen PDF mode
