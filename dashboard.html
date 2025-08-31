@@ -1,76 +1,190 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Skillmint Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f8f9fa; }
-    h2 { color: #333; }
-    .header { display: flex; align-items: center; justify-content: space-between; }
-    .profile { display: flex; align-items: center; gap: 15px; }
-    .profile img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #4CAF50; object-fit: cover; }
-    .earnings { margin-top: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-    .card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
-    .referrals { margin-top: 30px; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .upload-btn { margin-top: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f5f8fb;
+    }
+    header {
+      background: #007bff;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .container {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .earnings {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .earning-box {
+      background: #eef7ff;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    iframe {
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .fullscreen-btn {
+      margin-top: 10px;
+      padding: 10px 18px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .fullscreen-btn:hover {
+      background: #218838;
+    }
   </style>
 </head>
 <body>
+  <header>
+    Welcome, <span id="username"></span>
+  </header>
 
-  <div class="header">
-    <div class="profile">
-      <img id="profilePic" src="default.png" alt="Profile Picture">
-      <div>
-        <h2>Welcome, <span id="username"></span></h2>
-        <input type="file" id="uploadPic" class="upload-btn">
+  <div class="container">
+    <!-- Earnings Section -->
+    <div class="card">
+      <h2>Your Earnings</h2>
+      <div class="earnings">
+        <div class="earning-box">Today: ₹0</div>
+        <div class="earning-box">Last 7 days: ₹0</div>
+        <div class="earning-box">Last 30 days: ₹0</div>
+        <div class="earning-box">All Time: ₹0</div>
+      </div>
+    </div>
+
+    <!-- Referral Stats + Graph -->
+    <div class="card">
+      <h2>Referral Stats</h2>
+      <p>Invite friends! Earn 50% commission when they purchase a bundle.</p>
+      <p>Your referral code: <strong id="referralCode"></strong></p>
+      
+      <canvas id="referralChart" height="120"></canvas>
+    </div>
+
+    <!-- Bundle Access -->
+    <div class="card">
+      <h2>Your Purchased Bundle</h2>
+      <p id="bundleInfo"></p>
+      <div id="pdfViewer" style="display:none; margin-top:15px;">
+        <iframe id="pdfFrame" width="100%" height="500px" style="border: none;"></iframe>
+        <br>
+        <button class="fullscreen-btn" onclick="openFullscreen()">📖 Full Screen Read</button>
       </div>
     </div>
   </div>
 
-  <div class="earnings">
-    <div class="card"><h3>Today's Earnings</h3><p>₹0</p></div>
-    <div class="card"><h3>Last 7 Days</h3><p>₹0</p></div>
-    <div class="card"><h3>Last 30 Days</h3><p>₹0</p></div>
-    <div class="card"><h3>All Time</h3><p>₹0</p></div>
-  </div>
+  <!-- Load Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <div class="referrals">
-    <h3>Referral Stats</h3>
-    <p>Invite your friends! Earn <b>50% commission</b> when they buy a bundle.</p>
-    <p>Your Referral Code: <b id="referralCode">N/A</b></p>
-    <p>Referrals Joined: 0</p>
-    <p>Total Referral Earnings: ₹0</p>
-  </div>
+  <script>
+    // Load user info
+    const user = localStorage.getItem("username") || "User";
+    document.getElementById("username").textContent = user;
 
-<script>
-  // Load user data from localStorage
-  let user = JSON.parse(localStorage.getItem("userData"));
+    const referral = localStorage.getItem("referralCode") || "N/A";
+    document.getElementById("referralCode").textContent = referral;
 
-  if(user){
-    document.getElementById("username").textContent = user.username;
-    document.getElementById("referralCode").textContent = user.referral || "N/A";
-  } else {
-    // If no signup data, redirect back
-    window.location.href = "index.html";
-  }
+    // Example referral data (later we can save in localStorage)
+    const referralData = {
+      labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Today"],
+      data: [2, 3, 1, 5, 4, 6, 3] // dummy numbers
+    };
 
-  // Profile Picture Upload
-  let profilePic = document.getElementById("profilePic");
-  let uploadPic = document.getElementById("uploadPic");
+    // Draw chart
+    const ctx = document.getElementById("referralChart").getContext("2d");
+    new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: referralData.labels,
+        datasets: [{
+          label: "Referrals",
+          data: referralData.data,
+          borderColor: "#007bff",
+          backgroundColor: "rgba(0, 123, 255, 0.2)",
+          borderWidth: 2,
+          tension: 0.3,
+          fill: true,
+          pointRadius: 5,
+          pointBackgroundColor: "#007bff"
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: { grid: { display: false } }, y: { beginAtZero: true } }
+      }
+    });
 
-  // Load stored pic if available
-  if(localStorage.getItem("profilePic")){
-    profilePic.src = localStorage.getItem("profilePic");
-  }
+    // Load purchased bundle info
+    const purchasedBundle = localStorage.getItem("paymentBundle");
+    const price = localStorage.getItem("paymentPrice");
+    const status = localStorage.getItem("paymentVerified");
 
-  uploadPic.addEventListener("change", function(){
-    let reader = new FileReader();
-    reader.onload = function(e){
-      profilePic.src = e.target.result;
-      localStorage.setItem("profilePic", e.target.result);
+    const bundlePDFs = {
+      "1": "bundles/bundle1.pdf",
+      "2": "bundles/bundle2.pdf",
+      "3": "bundles/bundle3.pdf",
+      "4": "bundles/bundle4.pdf",
+      "5": "bundles/bundle5.pdf",
+      "6": "bundles/bundle6.pdf",
+      "7": "bundles/bundle7.pdf",
+      "8": "bundles/bundle8.pdf",
+      "9": "bundles/bundle9.pdf",
+      "10": "bundles/bundle10.pdf"
+    };
+
+    if(status === "pending") {
+      document.getElementById("bundleInfo").textContent = 
+        `You purchased Bundle ${purchasedBundle} (₹${price}). Your payment is under verification.`;
+    } else if(status === "verified") {
+      document.getElementById("bundleInfo").textContent = 
+        `You purchased Bundle ${purchasedBundle} (₹${price}). Payment verified ✅`;
+
+      document.getElementById("pdfViewer").style.display = "block";
+      document.getElementById("pdfFrame").src = bundlePDFs[purchasedBundle] + "#toolbar=0&navpanes=0&scrollbar=0";
+    } else {
+      document.getElementById("bundleInfo").textContent = "No bundle purchased yet.";
     }
-    reader.readAsDataURL(this.files[0]);
-  });
-</script>
 
+    // Fullscreen PDF mode
+    function openFullscreen() {
+      const frame = document.getElementById("pdfFrame");
+      if (frame.requestFullscreen) {
+        frame.requestFullscreen();
+      } else if (frame.webkitRequestFullscreen) { /* Safari */
+        frame.webkitRequestFullscreen();
+      } else if (frame.msRequestFullscreen) { /* IE11 */
+        frame.msRequestFullscreen();
+      }
+    }
+  </script>
 </body>
 </html>
