@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Skillmint Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f8f9fa; }
+    h2 { color: #333; }
+    .header { display: flex; align-items: center; justify-content: space-between; }
+    .profile { display: flex; align-items: center; gap: 15px; }
+    .profile img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid #4CAF50; object-fit: cover; }
+    .earnings { margin-top: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+    .card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+    .referrals { margin-top: 30px; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .upload-btn { margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="profile">
+      <img id="profilePic" src="default.png" alt="Profile Picture">
+      <div>
+        <h2>Welcome, <span id="username"></span></h2>
+        <input type="file" id="uploadPic" class="upload-btn">
+      </div>
+    </div>
+  </div>
+
+  <div class="earnings">
+    <div class="card"><h3>Today's Earnings</h3><p>₹0</p></div>
+    <div class="card"><h3>Last 7 Days</h3><p>₹0</p></div>
+    <div class="card"><h3>Last 30 Days</h3><p>₹0</p></div>
+    <div class="card"><h3>All Time</h3><p>₹0</p></div>
+  </div>
+
+  <div class="referrals">
+    <h3>Referral Stats</h3>
+    <p>Invite your friends! Earn <b>50% commission</b> when they buy a bundle.</p>
+    <p>Your Referral Code: <b id="referralCode">N/A</b></p>
+    <p>Referrals Joined: 0</p>
+    <p>Total Referral Earnings: ₹0</p>
+  </div>
+
+<script>
+  // Load user data from localStorage
+  let user = JSON.parse(localStorage.getItem("userData"));
+
+  if(user){
+    document.getElementById("username").textContent = user.username;
+    document.getElementById("referralCode").textContent = user.referral || "N/A";
+  } else {
+    // If no signup data, redirect back
+    window.location.href = "index.html";
+  }
+
+  // Profile Picture Upload
+  let profilePic = document.getElementById("profilePic");
+  let uploadPic = document.getElementById("uploadPic");
+
+  // Load stored pic if available
+  if(localStorage.getItem("profilePic")){
+    profilePic.src = localStorage.getItem("profilePic");
+  }
+
+  uploadPic.addEventListener("change", function(){
+    let reader = new FileReader();
+    reader.onload = function(e){
+      profilePic.src = e.target.result;
+      localStorage.setItem("profilePic", e.target.result);
+    }
+    reader.readAsDataURL(this.files[0]);
+  });
+</script>
+
+</body>
+</html>
