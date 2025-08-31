@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skillmint</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f8f9fc;
+      color: #333;
+    }
+    header {
+      background: #004aad;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .hero {
+      text-align: center;
+      padding: 20px;
+    }
+    .hero img {
+      max-width: 90%;
+      border-radius: 10px;
+    }
+    .form-section {
+      background: #fff;
+      padding: 20px;
+      margin: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .form-section h2 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #004aad;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #004aad;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .bundles {
+      padding: 20px;
+    }
+    .bundles h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #004aad;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      text-align: center;
+      padding-bottom: 10px;
+    }
+    .card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+    .card h3 {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>Skillmint</header>
+
+  <section class="hero">
+    <img src="your-main-image.jpg" alt="Skillmint Hero">
+  </section>
+
+  <section class="form-section">
+    <h2>Enroll to Skillmint</h2>
+    <form id="enrollForm">
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="email" id="email" placeholder="E-Mail Id" required>
+      <input type="password" id="password" placeholder="Password">
+      <button type="submit">Enroll</button>
+    </form>
+  </section>
+
+  <section class="bundles">
+    <h2>Choose Your Bundles</h2>
+    <div class="cards">
+      <div class="card"><img src="bundle1.jpg"><h3>Personal Branding</h3></div>
+      <div class="card"><img src="bundle2.jpg"><h3>Soft Skill Mastery</h3></div>
+      <div class="card"><img src="bundle3.jpg"><h3>Digital Marketing</h3></div>
+      <div class="card"><img src="bundle4.jpg"><h3>Finance Mastery</h3></div>
+      <div class="card"><img src="bundle5.jpg"><h3>Leadership</h3></div>
+      <div class="card"><img src="bundle6.jpg"><h3>Public Speaking</h3></div>
+      <div class="card"><img src="bundle7.jpg"><h3>Business Growth</h3></div>
+      <div class="card"><img src="bundle8.jpg"><h3>Startup Success</h3></div>
+      <div class="card"><img src="bundle9.jpg"><h3>Career Mastery</h3></div>
+      <div class="card"><img src="bundle10.jpg"><h3>More Coming Soon</h3></div>
+    </div>
+  </section>
+
+  <script>
+    // Save to browser local storage
+    document.getElementById("enrollForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const email = document.getElementById("email").value;
+      localStorage.setItem("skillmint_username", username);
+      localStorage.setItem("skillmint_email", email);
+      alert("Enrollment saved in your browser!");
+    });
+
+    // Auto-fill if data already saved
+    window.onload = function() {
+      if(localStorage.getItem("skillmint_username")) {
+        document.getElementById("username").value = localStorage.getItem("skillmint_username");
+      }
+      if(localStorage.getItem("skillmint_email")) {
+        document.getElementById("email").value = localStorage.getItem("skillmint_email");
+      }
+    }
+  </script>
+
+</body>
+</html>
