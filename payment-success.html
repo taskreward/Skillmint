@@ -1,19 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Payment Success - Skillmint</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Voucher</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 40px; }
-    .box { background: #f0fff0; border: 2px solid #4CAF50; padding: 30px; border-radius: 10px; display: inline-block; }
-    h1 { color: #4CAF50; }
-    .btn { padding: 10px 20px; background: green; color: white; border: none; cursor: pointer; text-decoration: none; border-radius: 5px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 350px;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #218838;
+    }
+    .note {
+      font-size: 14px;
+      margin-top: 10px;
+      color: #666;
+    }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h1>✅ Payment Successful</h1>
-    <p>Thank you for purchasing your bundle on <b>Skillmint</b>.</p>
-    <a href="dashboard.html" class="btn">Go to Dashboard</a>
+  <div class="container">
+    <h2>Payment Voucher</h2>
+    <p><strong>Important:</strong></p>
+    <ul>
+      <li>UTR/UPI Ref No is a 12-digit number.</li>
+      <li>Make sure the UTR you input is correct.</li>
+      <li>Upload the payment screenshot as proof.</li>
+    </ul>
+
+    <form id="voucherForm">
+      <label for="utr">UTR/UPI Ref No *</label>
+      <input type="text" id="utr" name="utr" maxlength="12" required placeholder="Enter 12-digit UTR No">
+
+      <label for="screenshot">Upload Payment Screenshot *</label>
+      <input type="file" id="screenshot" accept="image/*" required>
+
+      <button type="submit">Submit Voucher</button>
+    </form>
+
+    <p class="note">After submission, your payment will be verified before access to dashboard.</p>
   </div>
+
+  <script>
+    document.getElementById('voucherForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const utr = document.getElementById('utr').value.trim();
+      const screenshot = document.getElementById('screenshot').files[0];
+
+      if(utr.length !== 12 || isNaN(utr)) {
+        alert("Please enter a valid 12-digit UTR/UPI reference number.");
+        return;
+      }
+
+      if(!screenshot) {
+        alert("Please upload a payment screenshot.");
+        return;
+      }
+
+      // Store proof temporarily in localStorage (not secure, better backend later)
+      localStorage.setItem('paymentUTR', utr);
+      localStorage.setItem('paymentVerified', 'pending');
+
+      alert("Voucher submitted successfully! Admin will verify your payment.");
+      window.location.href = "dashboard.html"; 
+    });
+  </script>
 </body>
 </html>
